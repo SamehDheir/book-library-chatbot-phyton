@@ -4,8 +4,7 @@ from streamlit_chat import message
 from langchain.indexes import VectorstoreIndexCreator
 from langchain.chains import ConversationalRetrievalChain
 from langchain_community.document_loaders import TextLoader
-from langchain_community.embeddings import OpenAIEmbeddings
-from langchain_community.chat_models import ChatOpenAI
+from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 import warnings
 
 warnings.filterwarnings("ignore")
@@ -25,7 +24,7 @@ index = VectorstoreIndexCreator(embedding=OpenAIEmbeddings()).from_loaders([load
 
 # Create chain with k=3 to improve matching even with slight differences
 chain = ConversationalRetrievalChain.from_llm(
-    llm=ChatOpenAI(model="gpt-4.1-mini"),
+    llm=ChatOpenAI(model="gpt-4o-mini", openai_api_key=os.getenv("OPENAI_API_KEY")),
     retriever=index.vectorstore.as_retriever(search_kwargs={"k": 3})
 )
 
@@ -44,7 +43,7 @@ def conversational_chat(prompt):
     result = chain({"question": prompt, "chat_history": st.session_state['history']})
     
     # Check if retriever returned any source documents
-    if hasattr(result, 'source_documents') and result.source_documents:
+    if "source_documents" in result and result["source_documents"]:
         answer = result['answer']
     else:
         answer = "عذراً، لا أستطيع الإجابة عن هذا السؤال بناءً على محتوى مكتبة الكتب لدينا."
