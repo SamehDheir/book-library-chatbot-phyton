@@ -4,7 +4,7 @@ langchain-openai==0.3.27
 langchain-community==0.3.27
 tiktoken==0.9.0
 streamlit==1.46.1
-streamlit_chat==0.1.1
+streamlit-chat==0.1.1
 httpx==0.27.2
 
 
