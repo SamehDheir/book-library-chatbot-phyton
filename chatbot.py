@@ -20,11 +20,19 @@ response_container = st.container()
 # Load documents
 loader = TextLoader(data_file)
 documents = loader.load()
-index = VectorstoreIndexCreator(embedding=OpenAIEmbeddings()).from_loaders([loader])
+
+# Create embeddings using OpenAI API key from Streamlit Secrets
+embeddings = OpenAIEmbeddings(openai_api_key=os.getenv("OPENAI_API_KEY"))
+
+# Create vectorstore index
+index = VectorstoreIndexCreator(embedding=embeddings).from_loaders([loader])
 
 # Create chain with k=3 to improve matching even with slight differences
 chain = ConversationalRetrievalChain.from_llm(
-    llm=ChatOpenAI(model="gpt-4o-mini", openai_api_key=os.getenv("OPENAI_API_KEY")),
+    llm=ChatOpenAI(
+        model="gpt-4o-mini",
+        openai_api_key=os.getenv("OPENAI_API_KEY")
+    ),
     retriever=index.vectorstore.as_retriever(search_kwargs={"k": 3})
 )
 
