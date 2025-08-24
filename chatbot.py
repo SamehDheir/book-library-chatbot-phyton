@@ -21,7 +21,6 @@ response_container = st.container()
 # Load documents
 loader = TextLoader(data_file)
 documents = loader.load()
-print(f"تم تحميل {len(documents)} مستند/سطر من {data_file}")
 index = VectorstoreIndexCreator(embedding=OpenAIEmbeddings()).from_loaders([loader])
 
 # Create chain with k=3 to improve matching even with slight differences
